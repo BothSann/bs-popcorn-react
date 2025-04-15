@@ -74,6 +74,7 @@ body {
   min-height: 10rem;
   max-height: calc(100vh - 15rem);
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
