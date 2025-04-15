@@ -90,9 +90,7 @@ export default function App() {
           const res = await fetch(
             `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
             { signal }
-          ).catch(() => {
-            throw new Error("Connection lost!");
-          });
+          );
 
           if (!res.ok)
             throw new Error("Something went wrong with fetching the movie");
@@ -104,6 +102,7 @@ export default function App() {
           setError("");
         } catch (err) {
           if (err.name !== "AbortError") {
+            console.log(err.message);
             setError(err.message);
           }
         } finally {
@@ -117,6 +116,7 @@ export default function App() {
         return;
       }
 
+      handleCloseMovieDetails();
       fetchMovies();
 
       return function () {
@@ -311,7 +311,6 @@ function MovieDetails({
       function callBack(e) {
         if (e.code === "Escape") {
           handleCloseMovieDetails();
-          console.log("close movie details");
         }
       }
       document.addEventListener("keydown", callBack);
