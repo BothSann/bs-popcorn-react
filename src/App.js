@@ -79,13 +79,17 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
+      const { signal } = controller;
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
 
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal }
           ).catch(() => {
             throw new Error("Connection lost!");
           });
@@ -94,11 +98,14 @@ export default function App() {
             throw new Error("Something went wrong with fetching the movie");
 
           const data = await res.json();
-
           if (data.Response === "False") throw new Error(data.Error);
+
           setMovies(data.Search);
+          setError("");
         } catch (err) {
-          setError(err.message);
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -111,6 +118,10 @@ export default function App() {
       }
 
       fetchMovies();
+
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -315,7 +326,11 @@ function MovieDetails({
 
   useEffect(
     function () {
+      if (!title) return;
       document.title = `Movie | ${title}`;
+      return function () {
+        document.title = "bsPopcorn";
+      };
     },
     [title]
   );
