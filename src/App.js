@@ -308,6 +308,23 @@ function MovieDetails({
 
   useEffect(
     function () {
+      function callBack(e) {
+        if (e.code === "Escape") {
+          handleCloseMovieDetails();
+          console.log("close movie details");
+        }
+      }
+      document.addEventListener("keydown", callBack);
+
+      return function () {
+        document.removeEventListener("keydown", callBack);
+      };
+    },
+    [handleCloseMovieDetails]
+  );
+
+  useEffect(
+    function () {
       async function fetchMovieDetails() {
         setIsLoading(true);
         const res = await fetch(
